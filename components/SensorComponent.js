@@ -16,13 +16,14 @@ export function SensorComponent() {
   useEffect(() => {
     async function checkMotionAvilable() {
       const permissionResult = await DeviceMotion.getPermissionsAsync();
-      if (result.status === "granted") {
+      if (permissionResult.status === "granted") {
         const isAvailableResult = await DeviceMotion.isAvailableAsync();
-        const result = setIsAvailable(true);
+        setIsAvailable(true);
       }
     }
     checkMotionAvilable();
   }, []);
+
   useEffect(() => {
     let subscription;
     if (isAvailable) {
@@ -30,8 +31,13 @@ export function SensorComponent() {
         console.log(event);
       });
     }
-    return () => subscription && subscription.remove();
+    return () => {
+      if (subscription) {
+        subscription.remove();
+      }
+    };
   }, [isAvailable]);
+
   return (
     <View
       style={{
